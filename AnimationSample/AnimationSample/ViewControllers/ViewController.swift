@@ -49,7 +49,10 @@ class ViewController: UIViewController {
                        options: [],
                        animations: {
                         self.loginButton.bounds.size.width += 80.0
-        }, completion: nil)
+                        
+        }, completion: { _ in
+            self.showMessage(index: 0)
+        })
         UIView.animate(withDuration: 0.33, delay: 0.0,
                        usingSpringWithDamping: 0.7,
                        initialSpringVelocity: 0.0,
@@ -88,6 +91,7 @@ class ViewController: UIViewController {
         label.textColor = UIColor(red: 0.89, green: 0.38, blue: 0.0, alpha: 1.0) // TODO: - Make custom
         label.textAlignment = .center
         status.addSubview(label)
+        statusPosition = status.center
         
     }
     
@@ -115,12 +119,19 @@ class ViewController: UIViewController {
             self.headingLabel.center.x += self.view.bounds.width
         }
         
-        UIView.animate(withDuration: 0.5, delay: 0.3, options: [],
+        UIView.animate(withDuration: 0.5, delay: 0.3, usingSpringWithDamping: 0.6,
+                       initialSpringVelocity: 0.0,
+                       options: [],
                        animations: {
                         self.userNameTextField.center.x += self.view.bounds.width },
                        completion: nil )
         
-        UIView.animate(withDuration: 0.5, delay: 0.4, options: [],
+        
+        
+        UIView.animate(withDuration: 0.5, delay: 0.4,
+                       usingSpringWithDamping: 0.6,
+                       initialSpringVelocity: 0.0,
+                       options: [],
                        animations: {
                         self.passwordTextField.center.x += self.view.bounds.width },
                        completion: nil )
@@ -151,7 +162,7 @@ class ViewController: UIViewController {
         
         UIView.animate(withDuration: 0.5, delay: 0.5,
                        usingSpringWithDamping: 0.5,
-                       initialSpringVelocity: 0.0,
+                       initialSpringVelocity: 1.0,
                        options: [],
                        animations: {
                         self.loginButton.center.y -= 30.0
@@ -159,6 +170,35 @@ class ViewController: UIViewController {
         }, completion: nil)
         
     }
+    
+    func showMessage(index: Int) {
+        label.text = messages[index]
+        UIView.transition(with: status, duration: 0.33,
+                          options: [.curveEaseOut, .transitionCurlDown],
+                          animations: {
+                            self.status.isHidden = false
+        },
+                          completion: {_ in
+                            delay(2.0) {
+                                if index < self.messages.count-1 {
+                                    self.removeMessage(index: index)
+                                } else {
+                                    //reset form
+                                } }
+        } )
+    }
+    
+    func removeMessage(index: Int) {
+        UIView.animate(withDuration: 0.33, delay: 0.0, options: [],
+                       animations: {
+                        self.status.center.x += self.view.frame.size.width
+        },
+                       completion: { _ in
+                        self.status.isHidden = true
+                        self.status.center = self.statusPosition
+                        self.showMessage(index: index+1)
+        }
+        ) }
     
     // MARK: UITextFieldDelegate
     
